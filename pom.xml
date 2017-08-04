@@ -7,9 +7,18 @@
     <groupId>de.vanillekeks</groupId>
     <artifactId>Christen-Bot</artifactId>
     <version>1.0</version>
-    <packaging>jar</packaging>
 
     <dependencies>
+	    <dependency>
+		    <groupId>net.dv8tion</groupId>
+		    <artifactId>JDA</artifactId>
+		    <version>3.2.0_241</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.sedmelluq</groupId>
+    		<artifactId>lavaplayer</artifactId>
+    		<version>1.2.42</version>
+  		</dependency>
         <dependency>
             <groupId>com.github.axet</groupId>
             <artifactId>vget</artifactId>
@@ -26,6 +35,14 @@
             <version>1.22.0</version>
         </dependency>
     </dependencies>
+    
+    <repositories>
+    	<repository>
+    		<id>central</id>
+    		<name>bintray</name>
+    		<url>http://jcenter.bintray.com</url>
+  		</repository>
+    </repositories>
 
 
 </project>

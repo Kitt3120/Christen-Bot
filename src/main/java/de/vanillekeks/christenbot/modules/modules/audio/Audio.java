@@ -1,17 +1,18 @@
 package de.vanillekeks.christenbot.modules.modules.audio;
 
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.youtube.YouTube;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.vanillekeks.christenbot.Core;
 import de.vanillekeks.christenbot.misc.AdminChecker;
 import de.vanillekeks.christenbot.modules.Command;
 import de.vanillekeks.christenbot.modules.IModule;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
@@ -19,41 +20,21 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.hooks.EventListener;
 import net.dv8tion.jda.core.managers.AudioManager;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Audio implements IModule, EventListener {
 
     private List<Command> commands = new ArrayList<>();
     private User lockedUser;
-
+    
     private AudioManager audioManager;
-
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private static HttpTransport HTTP_TRANSPORT;
-    private YouTube youtube;
-
+    
     public Audio() {
-        try {
-            HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        } catch (Throwable t) {
-            t.printStackTrace();
-            System.err.println("Google HTTP_TRANSPORT could not be created. (Audio Module) - Exiting...");
-            System.exit(1);
-        }
-
-        youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() {
-            @Override
-            public void initialize(HttpRequest httpRequest) throws IOException {
-            }
-        }).setApplicationName("Christen-Bot").build();
-
-        Core.getInstance().getBot().addEventListener(this);
-        audioManager = Core.getInstance().getBot().getGuildById("339619850362159104").getAudioManager(); //Vatikan https://discord.gg/h7VgrS4
+    	audioManager = Core.getBot().getGuildById("339619850362159104").getAudioManager();
+    	audioManager.setSendingHandler(Core.getAudioSystem());
+    	
+		Core.getBot().addEventListener(this);		
         commands.add(new Command("Lock", null));
         commands.add(new Command("Unlock", null));
-        commands.add(new Command("Search", new String[]{"play"}));
+        commands.add(new Command("Search", null));
     }
 
     @Override
@@ -110,7 +91,7 @@ public class Audio implements IModule, EventListener {
                 }
                 String searchTerm = stringBuilder.toString().replaceFirst(" ", "");
                 try {
-                    new AudioRequest(searchTerm, channel, author, youtube);
+                    new AudioRequest(searchTerm, channel, author, Core.getYoutube());
                 } catch (IOException e) {
                     e.printStackTrace();
                     channel.sendMessage("Entschuldige, aber es gab einen Fehler bei der Anfrage").queue();
