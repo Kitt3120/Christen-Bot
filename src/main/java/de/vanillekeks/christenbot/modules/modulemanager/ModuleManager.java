@@ -6,6 +6,7 @@ import de.vanillekeks.christenbot.modules.IModule;
 import de.vanillekeks.christenbot.modules.modulemanager.exceptions.ModuleNotFoundException;
 import de.vanillekeks.christenbot.modules.modules.Audio;
 import de.vanillekeks.christenbot.modules.modules.GameChanger;
+import de.vanillekeks.christenbot.modules.modules.Update;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -39,6 +40,7 @@ public class ModuleManager implements EventListener {
                     //Register modules
                     register(new GameChanger());
                     register(new Audio());
+                    register(new Update());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
