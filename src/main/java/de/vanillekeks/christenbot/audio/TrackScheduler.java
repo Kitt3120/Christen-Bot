@@ -94,8 +94,8 @@ public class TrackScheduler extends AudioEventAdapter {
 	
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-		if (endReason.mayStartNext) {
-			System.out.println("MayStartNext -> Next track");
+		if (endReason.equals(AudioTrackEndReason.FINISHED)) {
+			System.out.println("Finished -> Next track");
 			try {
 				remove(0);
 			} catch (QueueSizeTooSmallException e) {

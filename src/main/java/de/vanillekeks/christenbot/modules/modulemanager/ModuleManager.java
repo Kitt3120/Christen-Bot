@@ -4,8 +4,8 @@ import de.vanillekeks.christenbot.Core;
 import de.vanillekeks.christenbot.modules.Command;
 import de.vanillekeks.christenbot.modules.IModule;
 import de.vanillekeks.christenbot.modules.modulemanager.exceptions.ModuleNotFoundException;
+import de.vanillekeks.christenbot.modules.modules.Audio;
 import de.vanillekeks.christenbot.modules.modules.GameChanger;
-import de.vanillekeks.christenbot.modules.modules.audio.Audio;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -125,5 +125,10 @@ public class ModuleManager implements EventListener {
         }
     }
 
+    public void shutdown() {
+        for (IModule module : modules) {
+            module.onShutdown();
+        }
+    }
 }
 // <3 Hi :3 Watashi wa anata o aishite

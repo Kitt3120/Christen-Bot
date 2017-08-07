@@ -19,7 +19,7 @@ public class GameChanger implements IModule {
     private List<Command> commands = new ArrayList<>();
 
     public GameChanger() {
-        commands.add(new Command("ChangeGame", "Ändert das Spiel, das der Bot spielt", new String[]{"CG", "ChangeG", "CGame"}));
+
     }
 
     @Override
@@ -108,6 +108,10 @@ public class GameChanger implements IModule {
     public void onEvent(Event event) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void onShutdown() {
     }
 
 }

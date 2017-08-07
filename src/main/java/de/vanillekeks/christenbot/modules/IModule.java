@@ -28,4 +28,5 @@ public interface IModule {
 
     public void onEvent(Event event);
 
+    void onShutdown();
 }

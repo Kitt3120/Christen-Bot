@@ -103,4 +103,9 @@ public class Core {
     public static AudioSystem getAudioSystem() {
 		return audioSystem;
 	}
+
+    public static void shutdown() {
+        moduleManager.shutdown();
+        System.exit(0);
+    }
 }

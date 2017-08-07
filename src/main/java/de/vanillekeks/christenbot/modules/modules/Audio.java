@@ -1,4 +1,4 @@
-package de.vanillekeks.christenbot.modules.modules.audio;
+package de.vanillekeks.christenbot.modules.modules;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -322,6 +322,10 @@ public class Audio implements IModule, EventListener {
         if (event instanceof GuildVoiceMoveEvent) {
             if (((GuildVoiceMoveEvent) event).getMember().getUser().equals(lockedUser)) joinChannel();
         }
+    }
+
+    @Override
+    public void onShutdown() {
     }
 
 }
