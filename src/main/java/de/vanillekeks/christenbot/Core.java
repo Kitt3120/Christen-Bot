@@ -1,9 +1,5 @@
 package de.vanillekeks.christenbot;
 
-import java.io.IOException;
-
-import javax.security.auth.login.LoginException;
-
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -11,14 +7,17 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
-
+import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
+import de.vanillekeks.christenbot.audio.AudioSystem;
 import de.vanillekeks.christenbot.frames.GUIFrame;
 import de.vanillekeks.christenbot.modules.modulemanager.ModuleManager;
-import de.vanillekeks.christenbot.modules.modules.audio.AudioSystem;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
+
+import javax.security.auth.login.LoginException;
+import java.io.IOException;
 
 public class Core {
 
@@ -57,6 +56,9 @@ public class Core {
 		}
         System.out.println("Youtube-API set up. Starting AudioSystem...");
         audioSystem = new AudioSystem();
+        audioSystem.getAudioPlayer().setVolume(15);
+        audioSystem.getAudioPlayerManager().getConfiguration().setOpusEncodingQuality(10); //10 = max
+        audioSystem.getAudioPlayerManager().getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
         System.out.println("AudioSystem set up. Starting bot...");
     	
         instance = new Core();

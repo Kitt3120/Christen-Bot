@@ -1,4 +1,4 @@
-package de.vanillekeks.christenbot.modules.modules.audio;
+package de.vanillekeks.christenbot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -16,7 +16,6 @@ public abstract class TrackReceiveHandler implements AudioLoadResultHandler {
 	@Override
 	public void trackLoaded(AudioTrack track) {
 		trackScheduler.queue(track);
-		
 	}
 
 	@Override

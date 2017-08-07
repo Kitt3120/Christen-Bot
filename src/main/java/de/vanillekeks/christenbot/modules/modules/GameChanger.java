@@ -19,7 +19,7 @@ public class GameChanger implements IModule {
     private List<Command> commands = new ArrayList<>();
 
     public GameChanger() {
-        commands.add(new Command("ChangeGame", new String[]{"CG", "ChangeG", "CGame"}));
+        commands.add(new Command("ChangeGame", "Ändert das Spiel, das der Bot spielt", new String[]{"CG", "ChangeG", "CGame"}));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class GameChanger implements IModule {
                     }
                     final String gameName = sb.toString().replaceFirst(" ", "");
                     channel.sendMessage("Ich werde mich in die Abenteuer vom Spiel " + gameName + " st�rzen!").queue();
-                    Core.getInstance().getBot().getPresence().setPresence(OnlineStatus.ONLINE, new Game() {
+                    Core.getBot().getPresence().setPresence(OnlineStatus.ONLINE, new Game() {
 
                         @Override
                         public String getUrl() {
@@ -76,7 +76,7 @@ public class GameChanger implements IModule {
 
     @Override
     public void onRegister() {
-        Core.getInstance().getBot().getPresence().setPresence(OnlineStatus.ONLINE, new Game() {
+        Core.getBot().getPresence().setPresence(OnlineStatus.ONLINE, new Game() {
 
             @Override
             public String getUrl() {

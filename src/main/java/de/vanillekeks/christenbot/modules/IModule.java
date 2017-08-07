@@ -16,7 +16,7 @@ public interface IModule {
 
     public void onCommand(Command command, List<String> args, User author, MessageChannel channel, Message message);
 
-    //Name
+    //Info
     public String getName();
 
     //Misc

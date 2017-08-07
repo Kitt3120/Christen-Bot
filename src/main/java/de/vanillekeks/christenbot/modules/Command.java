@@ -9,9 +9,11 @@ public class Command {
     private List<String> aliases = new ArrayList<>();
 
     private List<String> triggers = new ArrayList<>();
+    private String description;
 
-    public Command(String command, String[] aliases) {
+    public Command(String command, String description, String[] aliases) {
         this.command = command;
+        this.description = description;
 
         if (aliases != null) {
             for (String alias : aliases) {
@@ -27,6 +29,10 @@ public class Command {
 
     public String getCommand() {
         return command;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public List<String> getAliases() {

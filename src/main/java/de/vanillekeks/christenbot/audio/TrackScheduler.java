@@ -1,14 +1,13 @@
-package de.vanillekeks.christenbot.modules.modules.audio;
-
-import java.util.ArrayList;
-import java.util.List;
+package de.vanillekeks.christenbot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-
 import de.vanillekeks.christenbot.Core;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrackScheduler extends AudioEventAdapter {
 	
@@ -31,8 +30,10 @@ public class TrackScheduler extends AudioEventAdapter {
 	}
 	
 	public void remove(int index) throws QueueSizeTooSmallException {
-		if(queue.size() < index) {
+		if (queue.size() > index) {
+			AudioTrack track = queue.get(index);
 			queue.remove(index);
+			System.out.println(track.getInfo().title + " removed from queue");
 		} else {
 			throw new QueueSizeTooSmallException("The queue only has " + queue.size() + " tracks but tried to remove track with id " + index);
 		}
@@ -60,7 +61,7 @@ public class TrackScheduler extends AudioEventAdapter {
 		} catch (QueueSizeTooSmallException e) {
 			e.printStackTrace();
 		}
-		play();
+		if (!queue.isEmpty()) play();
 	}
 	
 	public void stop() {
@@ -80,21 +81,38 @@ public class TrackScheduler extends AudioEventAdapter {
 		isPlaying = true;
 		System.out.println("Current track resumed");
 	}
-	
-	public boolean isPlaying() {
-		return !Core.getAudioSystem().getAudioPlayer().isPaused() && isPlaying;
+
+	public int getTrackIdByTrack(AudioTrack track) throws TrackNotInQueueException {
+		if (!queue.contains(track)) throw new TrackNotInQueueException();
+		int count = 0;
+		for (AudioTrack aTrack : queue) {
+			if (aTrack.equals(track)) return count;
+			count++;
+		}
+		return -1;
 	}
 	
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-		if(!endReason.equals(AudioTrackEndReason.STOPPED)) {
-			System.out.println("Current track end");
+		if (endReason.mayStartNext) {
+			System.out.println("MayStartNext -> Next track");
 			try {
 				remove(0);
 			} catch (QueueSizeTooSmallException e) {
 				e.printStackTrace();
 			}
+		} else {
+			System.out.println("Track end: " + endReason.name());
 		}
+
+		if (queue.isEmpty()) isPlaying = false;
 	}
 
+	public List<AudioTrack> getQueue() {
+		return queue;
+	}
+
+	public boolean isPlaying() {
+		return isPlaying;
+	}
 }

@@ -6,6 +6,7 @@ import de.vanillekeks.christenbot.modules.IModule;
 import de.vanillekeks.christenbot.modules.modulemanager.exceptions.ModuleNotFoundException;
 import de.vanillekeks.christenbot.modules.modules.GameChanger;
 import de.vanillekeks.christenbot.modules.modules.audio.Audio;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -33,7 +34,7 @@ public class ModuleManager implements EventListener {
             public void run() {
                 try {
                     Thread.sleep(2000L);
-                    Core.getInstance().getBot().addEventListener(manager);
+                    Core.getBot().addEventListener(manager);
 
                     //Register modules
                     register(new GameChanger());
@@ -80,10 +81,13 @@ public class ModuleManager implements EventListener {
         return modules;
     }
 
-    public boolean onMessageReceived(MessageReceivedEvent event) {
+    public boolean onCommand(MessageReceivedEvent event) {
         User author = event.getAuthor();
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
+
+        if (!channel.getType().equals(ChannelType.PRIVATE) && !channel.getId().equals("342328474956202004"))
+            return true;
 
         String msg = message.getContent();
         if (msg.startsWith("!")) {
@@ -93,12 +97,18 @@ public class ModuleManager implements EventListener {
                 if (!arg.startsWith("!") && !arg.startsWith("@")) args.add(arg);
             }
 
+            boolean hasFound = false;
             for (IModule module : modules) {
                 for (Command command : module.getCommands()) {
                     if (command.getTriggers().contains(cmd.toLowerCase())) {
+                        hasFound = true;
                         module.onCommand(command, args, author, channel, message);
                     }
                 }
+            }
+
+            if (!hasFound) {
+                channel.sendMessage("Ich habe keinen Befehl gefunden, der " + cmd.toLowerCase() + " lautet").queue();
             }
             return true;
         }
@@ -108,9 +118,7 @@ public class ModuleManager implements EventListener {
     @Override
     public void onEvent(Event event) {
         if (event instanceof MessageReceivedEvent) {
-            if (onMessageReceived((MessageReceivedEvent) event)) {
-                return;
-            }
+            if (onCommand((MessageReceivedEvent) event)) return;
         }
         for (IModule module : modules) {
             module.onEvent(event);

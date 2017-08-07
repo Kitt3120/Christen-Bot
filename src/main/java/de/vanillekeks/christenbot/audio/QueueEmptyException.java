@@ -1,4 +1,4 @@
-package de.vanillekeks.christenbot.modules.modules.audio;
+package de.vanillekeks.christenbot.audio;
 
 public class QueueEmptyException extends Exception {
 
