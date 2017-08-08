@@ -104,7 +104,7 @@ public class AudioRequest implements EventListener {
                 SearchResult result = response.getItems().get(index);
                 message.editMessage("```" + result.getSnippet().getTitle() + " zur Warteschlange hinzugefügt```").queue();
 
-                Core.getAudioSystem().play(result.getId().getVideoId(), message, TrackType.YOUTUBE);
+                Core.getAudioSystem().addToQueue(result.getId().getVideoId(), message, TrackType.YOUTUBE);
 
                 if (e.getChannelType().equals(ChannelType.TEXT) && e.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)) {
                     e.getMessage().delete().queue();

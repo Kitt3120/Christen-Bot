@@ -14,6 +14,8 @@ import de.vanillekeks.christenbot.modules.modulemanager.ModuleManager;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 import javax.security.auth.login.LoginException;
@@ -42,8 +44,9 @@ public class Core {
             System.err.println("Google HTTP_TRANSPORT could not be created. (Audio Module) - Exiting...");
             System.exit(1);
         }
-    	
-    	try {
+
+        System.out.println("Setting up Youtube-API");
+        try {
     		youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() {
                 @Override
                 public void initialize(HttpRequest httpRequest) throws IOException {
@@ -54,13 +57,8 @@ public class Core {
 			System.err.println("There was an error setting up the Youtube-API - " + e.getMessage() + "\nExiting...");
 			System.exit(1);
 		}
-        System.out.println("Youtube-API set up. Starting AudioSystem...");
-        audioSystem = new AudioSystem();
-        audioSystem.getAudioPlayer().setVolume(15);
-        audioSystem.getAudioPlayerManager().getConfiguration().setOpusEncodingQuality(10); //10 = max
-        audioSystem.getAudioPlayerManager().getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
-        System.out.println("AudioSystem set up. Starting bot...");
-    	
+        System.out.println("Youtube-API set up. Starting Bot...");
+
         instance = new Core();
         System.out.println("Started");
     }
@@ -73,6 +71,13 @@ public class Core {
             System.err.println("Could not start the bot: " + e.getMessage());
             System.exit(0);
         }
+
+        System.out.println("Setting up AudioSystem");
+        audioSystem = new AudioSystem();
+        audioSystem.getAudioPlayer().setVolume(15);
+        audioSystem.getAudioPlayerManager().getConfiguration().setOpusEncodingQuality(10); //10 = max
+        audioSystem.getAudioPlayerManager().getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
+        System.out.println("AudioSystem set up. Starting bot...");
 
         moduleManager = new ModuleManager();
 
@@ -107,5 +112,13 @@ public class Core {
     public static void shutdown() {
         moduleManager.shutdown();
         System.exit(0);
+    }
+
+    public static Guild getMainGuild() {
+        return bot.getGuildById("339619850362159104");
+    }
+
+    public static TextChannel getMainTextChannel() {
+        return getMainGuild().getTextChannelById("342328474956202004");
     }
 }

@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import de.vanillekeks.christenbot.Core;
+import de.vanillekeks.christenbot.audio.QueueEmptyException;
 import de.vanillekeks.christenbot.audio.QueueSizeTooSmallException;
 import de.vanillekeks.christenbot.audio.TrackNotInQueueException;
 import de.vanillekeks.christenbot.audio.TrackType;
@@ -44,6 +45,7 @@ public class Audio implements IModule, EventListener {
         commands.add(new Command("Volume", "Zeigt die Lautstärke", null));
         commands.add(new Command("Skip", "Startet eine Skip-Anfrage", null));
         commands.add(new Command("Discard", "Startet eine Anfrage, einen bevorstehenden Song aus der Warteschleife zu entfernen", null));
+        commands.add(new Command("FixAudio", "Fixt das Audio, wenn die Warteschleife nicht weiter spielt", null));
     }
 
     @Override
@@ -57,7 +59,7 @@ public class Audio implements IModule, EventListener {
     }
 
     @Override
-    public void onCommand(Command command, List<String> args, User author, MessageChannel channel, Message message) {
+    public void onCommand(Command command, List<String> args, User author, final MessageChannel channel, Message message) {
         if (commands.get(0).equals(command)) {
             if (lockedUser != null) {
                 if (lockedUser == author) {
@@ -137,7 +139,7 @@ public class Audio implements IModule, EventListener {
                 }
 
                 final Message finalMsg = msg;
-                Core.getAudioSystem().play(link, TrackType.LINK, new AudioLoadResultHandler() {
+                Core.getAudioSystem().addToQueue(link, TrackType.LINK, new AudioLoadResultHandler() {
                     @Override
                     public void trackLoaded(AudioTrack audioTrack) {
                         Core.getAudioSystem().getTrackScheduler().queue(audioTrack);
@@ -268,6 +270,31 @@ public class Audio implements IModule, EventListener {
                 }
             }
         }
+        if (commands.get(8).equals(command)) {
+            final Runnable fixAudio = new Runnable() {
+                @Override
+                public void run() {
+                    Core.getAudioSystem().stop();
+                    try {
+                        Core.getAudioSystem().start();
+                        channel.sendMessage("Audio gefixt").queue();
+                    } catch (QueueEmptyException e) {
+                        e.printStackTrace();
+                        channel.sendMessage("Die Warteschleife ist leer").queue();
+                    }
+                }
+            };
+            if (AdminChecker.isAdmin(author)) {
+                fixAudio.run();
+            } else {
+                new VoteRequest(author, channel, 25, "Audio reparieren") {
+                    @Override
+                    public void onTimeUp(int positiveVotes, int negativeVotes, int totalVotes, double positivePercentage, double negativePercentage, boolean isPositive) {
+                        fixAudio.run();
+                    }
+                };
+            }
+        }
     }
 
     private void joinChannel() {
@@ -275,7 +302,7 @@ public class Audio implements IModule, EventListener {
             disconnect();
             return;
         } else {
-            for (VoiceChannel voiceChannel : Core.getAudioSystem().getAudioManager().getGuild().getVoiceChannels()) {
+            for (VoiceChannel voiceChannel : Core.getMainGuild().getVoiceChannels()) {
                 for (Member member : voiceChannel.getMembers()) {
                     if (member.getUser().equals(lockedUser)) {
                         Core.getAudioSystem().getAudioManager().openAudioConnection(voiceChannel);

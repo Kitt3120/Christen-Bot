@@ -88,7 +88,7 @@ public class ModuleManager implements EventListener {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
 
-        if (!channel.getType().equals(ChannelType.PRIVATE) && !channel.getId().equals("342328474956202004"))
+        if (!channel.getType().equals(ChannelType.PRIVATE) && !channel.equals(Core.getMainTextChannel()))
             return true;
 
         String msg = message.getContent();

@@ -34,7 +34,7 @@ public class AudioSystem implements AudioSendHandler {
             public void run() {
                 try {
                     Thread.sleep(2000L);
-                    audioManager = Core.getBot().getGuildById("339619850362159104").getAudioManager();
+                    audioManager = Core.getMainGuild().getAudioManager();
                     audioManager.setSendingHandler(Core.getAudioSystem());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -75,7 +75,7 @@ public class AudioSystem implements AudioSendHandler {
         return audioManager;
     }
 
-    public void play(String source, final Message message, TrackType trackType) {
+    public void addToQueue(String source, final Message message, TrackType trackType) {
         if (trackType.equals(TrackType.YOUTUBE) && !(source.toLowerCase().startsWith("https://youtube.com") || source.toLowerCase().startsWith("http://youtube.com")))
             source = "https://youtube.com/watch?v=" + source;
         Core.getAudioSystem().getAudioPlayerManager().loadItem(source, new TrackReceiveHandler(Core.getAudioSystem().getTrackScheduler()) {
@@ -93,7 +93,7 @@ public class AudioSystem implements AudioSendHandler {
         });
     }
 
-    public void play(String source, TrackType trackType, AudioLoadResultHandler audioLoadResultHandler) {
+    public void addToQueue(String source, TrackType trackType, AudioLoadResultHandler audioLoadResultHandler) {
         if (trackType.equals(TrackType.YOUTUBE) && !(source.toLowerCase().startsWith("https://youtube.com") || source.toLowerCase().startsWith("http://youtube.com")))
             source = "https://youtube.com/watch?v=" + source;
         Core.getAudioSystem().getAudioPlayerManager().loadItemOrdered(Core.getAudioSystem().getTrackScheduler(), source, audioLoadResultHandler);
@@ -102,5 +102,13 @@ public class AudioSystem implements AudioSendHandler {
     public AudioTrack getCurrentTrack() {
         if (trackScheduler.getQueue().size() == 0) return null;
         return trackScheduler.getQueue().get(0);
+    }
+
+    public void stop() {
+        trackScheduler.stop();
+    }
+
+    public void start() throws QueueEmptyException {
+        trackScheduler.play();
     }
 }

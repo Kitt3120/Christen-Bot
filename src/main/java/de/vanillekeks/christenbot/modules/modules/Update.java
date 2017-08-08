@@ -41,7 +41,17 @@ public class Update implements IModule {
         }
 
         channel.sendMessage("Ich werde mich nun updaten...").queue();
-        Core.shutdown();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Core.shutdown();
+            }
+        }).start();
     }
 
     @Override

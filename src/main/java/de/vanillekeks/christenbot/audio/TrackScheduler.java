@@ -94,18 +94,20 @@ public class TrackScheduler extends AudioEventAdapter {
 	
 	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-		if (endReason.equals(AudioTrackEndReason.FINISHED)) {
-			System.out.println("Finished -> Next track");
+		if (endReason.mayStartNext) {
+			System.out.println("Track end: " + endReason.name() + " - Playing next track");
 			try {
 				remove(0);
 			} catch (QueueSizeTooSmallException e) {
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("Track end: " + endReason.name());
+			System.out.println("Track end: " + endReason.name() + "- Stopping");
 		}
 
-		if (queue.isEmpty()) isPlaying = false;
+		if (queue.isEmpty()) {
+			stop();
+		}
 	}
 
 	public List<AudioTrack> getQueue() {

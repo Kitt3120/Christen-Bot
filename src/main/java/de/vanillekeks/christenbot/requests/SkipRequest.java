@@ -92,7 +92,7 @@ public abstract class SkipRequest {
 
         refreshVotes();
 
-        if (votes == votesToSuccess) success();
+        if (votes >= votesToSuccess) success();
     }
 
     private void refreshVotes() {
